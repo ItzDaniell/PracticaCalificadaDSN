@@ -9,7 +9,7 @@ services:
     env_file: .env
     environment:
       - PGUSER=$PGUSER
-      - PGPASSWORDD=$PGPASSWORDD
+      - PGPASSWORD=$PGPASSWORD
       - PGHOST=db
       - PGPORT=$PGPORT
       - PGDATABASE=$PGDATABASE
@@ -35,7 +35,7 @@ services:
     volumes:     
       - dbdata:/data/db
     networks:
-      - app-network  
+      - app-network
 
 networks:
   app-network:
