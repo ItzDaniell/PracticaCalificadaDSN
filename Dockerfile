@@ -1,4 +1,6 @@
-FROM node:14
+FROM node:14-alpine
+
+RUN git clone https://github.com/ItzDaniell/PracticaCalificadaDSN.git && cd PracticaCalificadaDSN && npm install
 
 WORKDIR /usr/src/app
 
@@ -8,6 +10,6 @@ RUN npm install
 
 COPY . .
 
-EXPOSE 3000
+EXPOSE 8000
 
 CMD ["node", "bin/www"]
