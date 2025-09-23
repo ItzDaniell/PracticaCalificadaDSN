@@ -2,24 +2,20 @@
 En el presente repositorio se almacena la aplicación de NodeJs y PostgreSQL, que fue lanzado en un entorno EC2 de AWS expuesto en el puerto 8000.
 
 ## Instalación
+
 1.  **Clonar el repositorio**
 
-2.  **Crear un archivo .env con la configuración de la base de datos PostgreSKL**
+2.  **Crear un archivo .env con la configuración de la base de datos PostgreSQL**
+   
+3.  **Añadir los permisos de ejecucion de wait-for.sh**
 
-3.  **Install dependencies**
-
-    ```bash
-    npm install
-    ```
-
-4.  **Correr la aplicación en local**
+4.  **Ejecutar el comando docker**
 
     ```bash
-    npm start
+    docker compose up -d --build
     ```
-
- Accede al sitio en `http://127.0.0.1:3000/`
-
+5. **Acceder desde el puerto 8000**
+   
 ## Desarrollo
 - Agrega plantillas en views/
 - Expone las rutas en routes/
