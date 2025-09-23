@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+    <title><%= title %></title>
+</head>
+<body class="container">
+    <h3 class="center-align">Lista de Productos</h3>
+
+    <% if (array.length === 0) { %>
+        <h5 class="center-align">No hay productos disponibles</h5>
+    <% } else { %>
+        <% array.forEach(element => { %>
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title"><%= element.nombre %></span>
+                    <p>Precio: <%= element.precio %></p>
+                    <p>Descripción: <%= element.descripcion %></p>
+                </div>
+            </div>
+        <% }) %>
+    <% } %>
+    <a href="/" class="waves-effect waves-light btn grey">Agregar un nuevo producto</a>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+</body>
+</html>

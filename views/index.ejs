@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+</head>
+<body class="container">
+    <h3 class="center-align">Formulario de Producto</h3>
+
+    <form action="/productos" method="post">
+
+        <div class="input-field">
+            <label for="nombre">Nombre del producto:</label>
+            <input type="text" placeholder="Nombre del producto" name="nombre">
+        </div>
+
+        <div class="input-field">
+            <label for="precio">Precio del producto:</label>
+            <input type="number" placeholder="Precio del producto" name="precio">
+        </div>
+        <div class="input-field">
+            <label for="descripcion">Descripción del producto:</label>
+            <input type="text" placeholder="Descripción del producto" name="descripcion">
+        </div>
+
+        <button type="submit" class="waves-effect waves-light btn">Enviar</button>
+        <a href="/productos" class="waves-effect waves-light btn grey">Ver todos los productos</a>
+    </form>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+</body>
+</html>
