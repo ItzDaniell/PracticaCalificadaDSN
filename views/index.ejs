@@ -1,34 +1,113 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %></title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="container">
-    <h3 class="center-align">Formulario de Producto</h3>
+<body class="bg-gray-100 min-h-screen">
 
-    <form action="/productos" method="post">
+    <!-- Navbar -->
+    <nav class="bg-indigo-600 text-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+            <h1 class="text-xl font-semibold">Panel de Administración</h1>
+            <div class="flex space-x-4">
+                <a href="/" class="hover:bg-indigo-500 px-3 py-2 rounded-md">Listado</a>
+                <a href="/productos/add" class="hover:bg-indigo-500 px-3 py-2 rounded-md">Crear</a>
+            </div>
+        </div>
+    </nav>
 
-        <div class="input-field">
-            <label for="nombre">Nombre del producto:</label>
-            <input type="text" placeholder="Nombre del producto" name="nombre">
+    <!-- Contenido principal -->
+    <main class="max-w-7xl mx-auto px-6 py-10">
+
+        <!-- Encabezado -->
+        <h2 class="text-2xl font-bold text-gray-700 mb-8 text-center">Resumen General</h2>
+
+        <!-- Métricas -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+            <div class="bg-white shadow-md rounded-xl p-6 border-l-4 border-indigo-500">
+                <h3 class="text-gray-500 text-sm uppercase">Productos</h3>
+                <p class="text-3xl font-semibold text-gray-800 mt-2"><%= totalProductos || 120 %></p>
+                <span class="text-green-500 text-sm">+8% este mes</span>
+            </div>
+
+            <div class="bg-white shadow-md rounded-xl p-6 border-l-4 border-emerald-500">
+                <h3 class="text-gray-500 text-sm uppercase">Ventas</h3>
+                <p class="text-3xl font-semibold text-gray-800 mt-2">350</p>
+                <span class="text-green-500 text-sm">+15% respecto a septiembre</span>
+            </div>
+
+            <div class="bg-white shadow-md rounded-xl p-6 border-l-4 border-yellow-500">
+                <h3 class="text-gray-500 text-sm uppercase">Ingresos</h3>
+                <p class="text-3xl font-semibold text-gray-800 mt-2">S/ 12500</p>
+                <span class="text-red-500 text-sm">-3% última semana</span>
+            </div>
+
+            <div class="bg-white shadow-md rounded-xl p-6 border-l-4 border-pink-500">
+                <h3 class="text-gray-500 text-sm uppercase">Clientes</h3>
+                <p class="text-3xl font-semibold text-gray-800 mt-2">94</p>
+                <span class="text-green-500 text-sm">+12 nuevos</span>
+            </div>
         </div>
 
-        <div class="input-field">
-            <label for="precio">Precio del producto:</label>
-            <input type="number" placeholder="Precio del producto" name="precio">
-        </div>
-        <div class="input-field">
-            <label for="descripcion">Descripción del producto:</label>
-            <input type="text" placeholder="Descripción del producto" name="descripcion">
+        <!-- Botones de acción -->
+        <div class="flex flex-wrap justify-center gap-4 mb-12">
+            <a href="/productos/add" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-semibold shadow">
+                ➕ Agregar Producto
+            </a>
+            <a href="/reportes" class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-lg font-semibold shadow">
+                📊 Generar Reporte
+            </a>
+            <a href="/configuracion" class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-semibold shadow">
+                ⚙️ Configuración
+            </a>
         </div>
 
-        <button type="submit" class="waves-effect waves-light btn">Enviar</button>
-        <a href="/productos" class="waves-effect waves-light btn grey">Ver todos los productos</a>
-    </form>
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+        <!-- Tabla reciente -->
+        <section class="bg-white shadow-md rounded-xl p-6">
+            <h3 class="text-lg font-semibold text-gray-700 mb-4">Productos recientes</h3>
+            <table class="min-w-full text-left text-gray-700">
+                <thead>
+                    <tr class="border-b">
+                        <th class="py-3 px-4">Nombre</th>
+                        <th class="py-3 px-4">Marca</th>
+                        <th class="py-3 px-4">Descripción</th>
+                        <th class="py-3 px-4">Precio</th>
+                        <th class="py-3 px-4">Stock</th>
+                        <th class="py-3 px-4">Imagen</th>
+                        <th class="py-3 px-4">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% productos.forEach(p => { %>
+                        <tr class="border-b hover:bg-gray-50 transition">
+                            <td class="py-3 px-4"><%= p.nombre %></td>
+                            <td class="py-3 px-4"><%= p.marca %></td>
+                            <td class="py-3 px-4"><%= p.descripcion %></td>
+                            <td class="py-3 px-4">S/ <%= p.precio %></td>
+                            <td class="py-3 px-4"><%= p.stock %></td>
+                            <td class="py-3 px-4"><img src="<%= p.imagen %>" alt="<%= p.nombre %>" class="w-16 h-16 object-cover rounded-md"></td>
+
+                            <td class="py-3 px-4">
+                                <a href="/producto/<%= p.id %>/edit" class="text-indigo-600 hover:underline">Editar</a>
+                                |
+                                <form action="/producto/<%= p.id %>/delete" method="post">
+                                    <button type="submit" class="text-red-600 hover:underline">Eliminar</button>
+                                </form>
+                            </td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </section>
+
+    </main>
+
+    <footer class="text-center mt-10 text-gray-500 text-sm pb-4">
+        © <%= new Date().getFullYear() %> - Dashboard Administrativo
+    </footer>
+
 </body>
 </html>
