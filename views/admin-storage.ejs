@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title %></title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+  <nav class="bg-indigo-600 text-white shadow">
+    <div class="max-w-5xl mx-auto px-4 py-3 flex justify-between items-center">
+      <h1 class="text-lg font-semibold">Administración de Storage</h1>
+      <a href="/" class="px-3 py-1.5 bg-indigo-500 hover:bg-indigo-700 rounded">Inicio</a>
+    </div>
+  </nav>
+
+  <main class="max-w-5xl mx-auto p-6">
+    <section class="bg-white rounded-lg shadow p-5 mb-6">
+      <h2 class="text-xl font-semibold mb-3">Configuración actual</h2>
+      <form id="configForm" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div>
+          <label class="block text-sm text-gray-600">Tipo</label>
+          <input value="<%= storage.type %>" name="type" class="w-full border rounded px-3 py-2" readonly />
+        </div>
+        <div>
+          <label class="block text-sm text-gray-600">Bucket</label>
+          <input value="<%= storage.bucket %>" name="bucket" id="bucket" class="w-full border rounded px-3 py-2" readonly />
+        </div>
+        <div>
+          <label class="block text-sm text-gray-600">Región</label>
+          <input value="<%= storage.region %>" name="region" id="region" class="w-full border rounded px-3 py-2" readonly />
+        </div>
+        <div class="md:col-span-3 flex justify-end gap-2">
+          <button type="button" id="saveConfig" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded">Guardar</button>
+        </div>
+      </form>
+      <p id="configMsg" class="text-sm mt-2 text-gray-600"></p>
+    </section>
+
+    <section class="bg-white rounded-lg shadow p-5 mb-6">
+      <h2 class="text-xl font-semibold mb-3">Backup</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <input placeholder="Backup bucket" id="backupBucket" class="w-full border rounded px-3 py-2" />
+        <input placeholder="Backup region (opcional)" id="backupRegion" class="w-full border rounded px-3 py-2" />
+        <button id="runBackup" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded">Ejecutar Backup</button>
+      </div>
+      <p id="backupMsg" class="text-sm mt-2 text-gray-600"></p>
+    </section>
+
+    <section class="bg-white rounded-lg shadow p-5 mb-6">
+      <h2 class="text-xl font-semibold mb-3">Eliminar originales (Cleanup)</h2>
+      <div class="flex gap-3">
+        <button id="runCleanup" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded">Eliminar originales</button>
+      </div>
+      <p id="cleanupMsg" class="text-sm mt-2 text-gray-600"></p>
+    </section>
+
+    <section class="bg-white rounded-lg shadow p-5">
+      <h2 class="text-xl font-semibold mb-3">Restaurar desde Backup</h2>
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <input placeholder="Backup bucket" id="restoreBackupBucket" class="w-full border rounded px-3 py-2" />
+        <input placeholder="Target bucket" id="restoreTargetBucket" class="w-full border rounded px-3 py-2" />
+        <input placeholder="Target region (opcional)" id="restoreTargetRegion" class="w-full border rounded px-3 py-2" />
+        <label class="inline-flex items-center gap-2 text-sm text-gray-700">
+          <input type="checkbox" id="restoreUpdateConfig" class="border rounded" />
+          Actualizar configuración
+        </label>
+      </div>
+      <div class="mt-3">
+        <button id="runRestore" class="px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded">Restaurar</button>
+      </div>
+      <p id="restoreMsg" class="text-sm mt-2 text-gray-600"></p>
+    </section>
+  </main>
+
+  <script>
+    const j = (sel) => document.querySelector(sel);
+
+    j('#saveConfig').onclick = async () => {
+      const bucket = j('#bucket').value.trim();
+      const region = j('#region').value.trim();
+      const r = await fetch('/admin/storage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ bucket, region })});
+      const data = await r.json();
+      j('#configMsg').textContent = r.ok ? 'Configuración guardada' : (data.error || 'Error');
+    };
+
+    j('#runBackup').onclick = async () => {
+      const backupBucket = j('#backupBucket').value.trim();
+      const backupRegion = j('#backupRegion').value.trim();
+      const r = await fetch('/admin/storage/backup', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ backupBucket, backupRegion })});
+      const data = await r.json();
+      j('#backupMsg').textContent = r.ok ? `Backup: copiados ${data.summary?.copied || 0}, errores ${data.summary?.errors || 0}` : (data.error || 'Error');
+    };
+
+    j('#runCleanup').onclick = async () => {
+      const r = await fetch('/admin/storage/cleanup', { method: 'POST' });
+      const data = await r.json();
+      j('#cleanupMsg').textContent = r.ok ? `Eliminados ${data.summary?.deleted || 0} objetos en ${data.summary?.batches || 0} lotes` : (data.error || 'Error');
+    };
+
+    j('#runRestore').onclick = async () => {
+      const backupBucket = j('#restoreBackupBucket').value.trim();
+      const targetBucket = j('#restoreTargetBucket').value.trim();
+      const targetRegion = j('#restoreTargetRegion').value.trim();
+      const updateConfig = j('#restoreUpdateConfig').checked;
+      const r = await fetch('/admin/storage/restore', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ backupBucket, targetBucket, targetRegion, updateConfig })});
+      const data = await r.json();
+      j('#restoreMsg').textContent = r.ok ? `Restaurados ${data.summary?.copied || 0}, errores ${data.summary?.errors || 0}, URLs actualizadas ${data.summary?.urlsUpdated || 0}` : (data.error || 'Error');
+    };
+  </script>
+</body>
+</html>

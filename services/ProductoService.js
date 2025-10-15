@@ -1,5 +1,5 @@
 import ProductoRepository from "../repositories/ProductoRepository.js";
-import S3Service from './S3Service.js';
+import StorageFactory from './storage/StorageFactory.js';
 
 class ProductoService {
     async getAllProducts() {
@@ -18,7 +18,9 @@ class ProductoService {
     async createProduct(data) {
         let imageUrl = '';
         if (data.file) {
-            imageUrl = await S3Service.uploadFile(data.file);
+            const storage = await StorageFactory.get();
+            const { url } = await storage.upload(data.file);
+            imageUrl = url;
         }
         return await ProductoRepository.createProduct({
             ...data,
@@ -43,11 +45,12 @@ class ProductoService {
     async updateProduct(id, data) {
         let imageUrl = data.imagenActual;
         if (data.file) {
-            // Si hay una nueva imagen, eliminar la anterior y subir la nueva
+            const storage = await StorageFactory.get();
             if (imageUrl) {
-                await S3Service.deleteFile(imageUrl);
+                await storage.deleteByUrl(imageUrl);
             }
-            imageUrl = await S3Service.uploadFile(data.file);
+            const { url } = await storage.upload(data.file);
+            imageUrl = url;
         }
         return await ProductoRepository.updateProduct(id, {
             ...data,
@@ -58,7 +61,8 @@ class ProductoService {
     async deleteProduct(id) {
         const producto = await this.getProductById(id);
         if (producto.imagen) {
-            await S3Service.deleteFile(producto.imagen);
+            const storage = await StorageFactory.get();
+            await storage.deleteByUrl(producto.imagen);
         }
         return await ProductoRepository.deleteProduct(id);
     }

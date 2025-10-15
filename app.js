@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import mainRouter from './routes/main.routes.js';
 import productosRouter from './routes/producto.routes.js';
+import adminRouter from './routes/admin.routes.js';
 import createError from 'http-errors';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
@@ -28,6 +29,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', mainRouter);
 app.use('/', productosRouter);
+app.use('/', adminRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
