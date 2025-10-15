@@ -53,13 +53,22 @@
             </div>
 
             <div>
-                <label class="block font-semibold text-gray-700">Imagen (URL)</label>
-                <input type="text" name="imagen" value="<%= producto.imagen %>" class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-400" required>
+                <label class="block font-semibold text-gray-700">Imagen</label>
+                <div class="mb-2">
+                    <% if (producto.imagen && typeof producto.imagen === 'string' && producto.imagen.trim().length > 0) { %>
+                        <a href="<%= producto.imagen %>" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline">Ver imagen pública</a>
+                    <% } else { %>
+                        <span class="text-gray-400">Sin imagen</span>
+                    <% } %>
+                </div>
+                <input type="file" name="imagen" accept="image/*" class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-400">
+                <input type="hidden" name="imagenActual" value="<%= producto.imagen %>">
+                <p class="text-sm text-gray-500 mt-1">Deja vacío para mantener la imagen actual</p>
             </div>
 
-            <div class="flex justify-end space-x-4">
-                <a href="/" class="bg-gray-500 hover:bg-gray-600 text-white px-5 py-2 rounded-lg">Cancelar</a>
-                <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg">Actualizar</button>
+            <div class="flex justify-end space-x-3">
+                <a href="/" class="inline-flex items-center gap-1 px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white text-sm font-medium rounded-md shadow">↩️ Cancelar</a>
+                <button type="submit" class="inline-flex items-center gap-1 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-md shadow">🛠️ Actualizar</button>
             </div>
         </form>
     </main>
